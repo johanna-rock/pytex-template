@@ -1,0 +1,118 @@
+% A0 Format
+\documentclass[22pt, a0paper, portrait, innermargin=30mm, blockverticalspace=0mm, colspace=0mm, subcolspace=0mm]{tikzposter}
+
+%% 917mm x 1189mm Format
+%\documentclass[22pt, portrait, innermargin=40mm, blockverticalspace=0mm, colspace=0mm, subcolspace=0mm]{tikzposter}
+%\geometry{paperwidth=917mm,paperheight=1189mm}
+\makeatletter
+\setlength{\TP@visibletextwidth}{\textwidth-2\TP@innermargin}
+\setlength{\TP@visibletextheight}{\textheight-2\TP@innermargin}
+\makeatother
+
+% maybe leave it to show appreciation
+\tikzposterlatexaffectionproofoff
+
+\usepackage[utf8]{inputenc}
+\usepackage[icelandic, english]{babel}
+\usepackage{CJKutf8}
+\usepackage{savesym}
+\usepackage{graphicx}
+\usepackage{tikz}
+\savesymbol{iint}
+\usepackage{wasysym}
+\restoresymbol{TXF}{iint}
+\usepackage{xcolor}
+\usepackage{xstring}
+\newcommand\IfStringInList[2]{\IfSubStr{,#2,}{,#1,}}
+
+\renewcommand\familydefault{\sfdefault}
+
+\usetheme{Simple}
+
+\usepackage{datatool}
+\DTLsetseparator{;}
+\DTLloaddb
+{program}
+{session_program_files/\SessionFile}
+
+\definecolor{logo}{RGB}{226,32,76}
+
+\colorlet{titlebgcolor}{white}
+\colorlet{blocktitlefgcolor}{logo}
+
+\renewcommand{\baselinestretch}{0.8}
+
+\begin{document}\maketitle
+\begin{CJK*}{UTF8}
+
+\DTLforeach{program}
+ {
+  \SessionName=SessionName,%
+  \SessionID=SessionID,%
+  \Room=room,%
+  \Date=date,%
+  \Time=time,%
+  \PaperCode=paper_code,%
+  \Category=Category,%
+  \Title=Title,%
+  \Area=Area,%
+  \ChairAFirstName=chair_1_first_name,%
+  \ChairALastName=chair_1_last_name,%
+  \ChairAAffiliation=chair_1_affiliation,%
+  \ChairBFirstName=chair_2_first_name,%
+  \ChairBLastName=chair_2_last_name,%
+  \ChairBAffiliation=chair_2_affiliation,%
+  \Authors=authors_tex,%
+  \Affiliations=affiliations_tex%
+ }
+ {
+\expandafter\ifstrequal\expandafter{\Category}{Session Title}{
+ 
+% new session row
+ \block[linewidth=0pt]{\vspace{-2.5cm}
+        \Huge{\SessionName}
+        \vspace{0.6cm}
+%
+    	\begin{tikzpicture}[remember picture, overlay, transform shape]
+		\node [anchor=north west, inner sep=0pt]
+		at (current page.north west)
+		{
+			\includegraphics[width=\paperwidth]{background.pdf}
+		};
+		\end{tikzpicture}
+		
+		\huge{\Room, \Time, \Date}
+		%
+		\vspace{0.4cm}
+		
+		\large{\Authors}
+		
+		\large{\Affiliations}
+		
+		\vspace{-0.5cm}
+	}{}
+ }{
+    \expandafter\IfStringInList\expandafter{\Category}{Survey Talk,Oral,Poster,Show&Tell}{
+        % oral / poster / show&tell row
+        \block{}
+        {
+            \vspace{-0.8cm}
+    		\LARGE{\Title}
+    		
+    		\vspace{0.3cm}
+    		
+    		\large{\Authors}
+    		
+    		\vspace{0.1cm}
+    		
+    		\large{\Affiliations}
+    		
+    		\vspace{0.1cm}
+    		
+    		\fbox{\large{\PaperCode}} \expandafter\IfStringInList\expandafter{\Category}{Survey Talk,Oral}{\hspace{1cm} \clock\ \Time}{}
+    	}
+    }{}
+ }
+ }
+\end{CJK*}
+\end{document}`
